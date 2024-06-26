@@ -1,0 +1,49 @@
+Spring BOOT
+
+1. spring initializr then we download the package with required dependencies.
+	we import in eclipse.
+
+  server port 8080
+	application.properties is the configuration file
+
+@SpringBootApplication - it is a combination of three annotations
+	1. @COnfiguration - to tell the spring container and make a class as java based configuration file where we can declare the bean objects.
+	2. @EnableAutoConfiguration: it is used to tell the spring container to automatically create the bean objects and maintain them.
+	3. @ComponentScan -scans the current package if in another package, we have to specify like
+	@ConfigurationScan("com.excelr.package")
+
+//Student class this is a pojo class and a component so use @Component
+//so it scans all pojo classes. we have component scan as one of the annotation inside @SpringBootApplication
+//Error if no @Component - No qualifying bean of type 'com.excelr.demo1.Student' available
+==============================================
+
+@RestController - to make the class controller class | to accept, process request and send response.
+
+========================================
+
+REST APIs 
+@RequestMapping("/welcome") but we have to define method and value
+	@RequestMapping(value = "/welcome", method = requestMethod.GET) but if we dont want to use we can use below.
+-> @GetMapping("/welcome")
+
+//we can call these restApi from any of the application react, angular any browser, postman, if we know the URL
+
+-------
+we dont have to use @Component -> Student if we dont want spring container to create an object for us.
+
+JPA- api hibernate
+Mysql driver
+
+dialect htm to ddl
+//Dao ->(is dependent) service layer -> controller layer
+
+springBoot dev tool to automatically restart the server
+
+cascade = CascadeType.ALL meaning were telling spring boot to make an object of whatever is required (parent or child) so there is no error.
+------------------------------
+OneToMany
+
+-ManyToOne side will be parent here where the annotation @JsonManagedReference is used. We want to make sure that we say @OneToMany(mappedBy = "department", cascade = CascadeType.ALL) to say 
+in child
+//@JsonIgnoreProperties("employee") shows the detail of dependent property
+//@JsonBackReference completely skips the whole detail of this

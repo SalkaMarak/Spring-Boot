@@ -1,0 +1,138 @@
+Spring framework
+================================================
+
+Spring container/ IOC(inversion of control)
+	core component of spring framework
+Roles and responsibilities:
+
+1. Bean object
+POJO class: class having 
+	1. private members, 
+	2. public geters & setters, 
+	3. and no arg constructor. 
+   When we make a object of that class we get bean object.
+
+2. Dependency Injection (1 & 2 very impt)
+3. Manage bean object life cycle
+4. AOP
+5. Transaction management.
+
+==============================================
+
+new keyword - tight coupling
+bean object creation - loose coupling
+
+================
+creating object using
+
+1. xml. we use xml -> 
+   we use ApplicationContext context = new ClassPathXmlApplicationContext(loc);
+
+    <bean class="com.excelr.spring_project1.Student" id="std1">
+    	<property name="sid" value="420"/>
+    	<property name="sname" value="deepika"/>
+    	<property name="marks" value="85"/>
+    </bean>
+	id is the reference for this particular bean
+
+2. java file use: 
+   ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+	-@Configuration on SpringConfiguration.java class to let the spring container know that this is the config java file.
+	-@Bean("std1") //so the spring container knows which method to call to get bean. std1 is reference variable
+
+//in getBean("stu1") we can either use bean reference name or @bean java config method name
+
+3. annotation based
+   -@Configuration on SpringConfiguration.java class to let the spring container know that this is the config java file.
+   -@Component //this class will be represented as bean class on Student pojo class
+   -@ComponentScan: on SpringCOnfiguration class- @ComponentScan //will scan all component annotated classes
+	@ComponentScan(location) if on diff package
+
+=============================================
+Java or annotation is mostly used. XML is outdated
+=============================================
+
+1. ioc container
+2. dependency injection this two are important to go to spring boot
+========================================
+
+-Dependency injection
+   
+Dependent: one object depends on another object.
+Injection: passing the reference of one object inside another object.
+	Advantage: Objects will be loosely coupled so that test and managing becomes easier.
+   -Three ways we can achieve:
+ 1. Setter dependency injection
+ 2. Constructor dependency inejection.
+ 3. Property injection
+	(first we'll do using XML config first then w Java)
+
+1. Setter way -
+   (using property is setter injection)
+	<bean class="com.excelr.Student" id="stud1">
+		<property name="rollno" value="1" />
+		<property name="sname" value="aman" />
+		<property name="address" ref="add1" />
+	</bean>
+	<!-- address is not a primitive type so we use ref instead of value attribute -->
+
+2. Constructors way-
+   we remove the getters and setters method and use direct constructors injection.
+	<bean class="com.excelr.Student" id="stud1">
+		<constructor-arg value="1" />
+		<constructor-arg value="aman" />
+		<constructor-arg ref="add1" />
+	</bean>
+
+  a). using java
+	in app
+  ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        Student stu1 =(Student)context.getBean(Student.class);
+        System.out.println(stu1);
+  and in springconfig java file
+@Configuration
+public class SpringConfig
+{
+	@Bean
+	public Address createAddress() {
+		Address ad1 = new Address();
+		ad1.setHouseNo(108);
+		ad1.setCity("Pune");
+		ad1.setPincode(132102);
+		return ad1;
+	}
+	@Bean
+	public Student createStudent() {
+		Student stu1 = new Student();
+		stu1.setRollno(1);
+		stu1.setSname("Aman");
+		stu1.setAddress(createAddress());
+		return stu1;
+	}
+}
+======================
+3. property injection: 
+ @Autowired annotation 
+	is used to automatically inject the dependency. like in Springconfig class we dont have to call
+   	@Bean
+	public Student createStudent() {
+		Student stu = new Student();
+		stu.setSid(1);
+		stu.setSname("Aman");
+		//stu.setAddress(createAddress()); // this would be manual dependency injection
+		return stu;
+	} 
+we dont even need getters and setters for Address in Student class.
+ -autowired is property injection
+In spring boot we use autowired annotation
+
+-if two addresses are present then use @Qualifier("createAddress2") like this 
+public class Student
+{
+	private int sid;
+	private String sname;
+	@Autowired
+	//@Qualifier("createAddress2") or
+	@Qualifier("add2") //when we have named the bean annotation
+	private Address address;
+	

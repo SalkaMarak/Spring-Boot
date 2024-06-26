@@ -1,0 +1,96 @@
+Most commonly used Annotations in hibernate
+-------------------------------
+
+1. @Entity: If we annotate any class with it, then hibernate will create a corresponding table for the class inside the database.
+
+2. @Table(name="Student") when we want to change the name of the table.
+	the two are class level annotation which is used to customize the table name that is created in the database.
+
+3. @Id it is used to make a particular attribute(column) as primary key in the table
+
+4. @GeneratedValue(strategy = generationType.IDENTITY) -to make the database generated this primary key value. (Auto-increment)
+
+5. @OneToOne: used for one to one Mapping.
+	eg one student have one laptop
+	   one laptop used by one student
+
+6. @OneToMany: used for one to many mapping.
+	eg one department have many employees
+
+7. @ManyToOne: used for many to one mapping.
+	eg many employees are working for one department.
+
+8. @ManyToMany: used for many to many mapping.
+	eg many students are undertaking many courses
+	   many courses are taken by many students
+
+9. @Column(name ="someName"): it is used to customise the column name of a table.
+
+10. @Transient : it is property/attribute level annotation and is used in order to skip the inclusion in the table creation. Say password we dont want to save it in database.
+
+11. @JoinColumn when there is any kind of association in a table which is foreign key that connects another table, to customise that foreign key column, we use this.
+
+--@Cacheable
+  @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+
+Spring / spring boot annotations:
+-------------------------------
+
+12. @Controller: This annotation is used to make a class as a controller layer, that can have the ability to accept the request that comes from the client. It sends the response only in HTTP protocol.
+	13.@ResponseBody if we use Controller only and not @RestCOntroller we have to use this two to send response in JSON(javascript obj notation) format.
+
+14. @RestController use this to achieve the above two annotations in one annotation. This will create the controller layer and also send the response in JSON format.
+
+15. @Service it is used to make a class as service layer where we can implement our business logic.
+
+16. @Repository it is used to make an interface as repository/dao layer. (Optional because we are implementing JpaRepository or CRUDRepository they have used this annotation. When we inherit those interfaces automatically the annotation is also inerited)
+
+17. @Autowired : It is used for automatic dependency injection by the spring container.
+     Dependency injection:
+	1. property inj, 2. setter inj, 3. Constructor inj
+		either java or XML
+  In @Autowired we do property based injection.
+
+18. @Qualifier("ref") when we have more than one bean object that can be involved in dependency injection, then our spring container will get confused which particular bean pbject has to be injected in the dependent class.
+	Hence in order to avoid the ambiguity we specify the particular object using @Qualifier annotation.
+
+19. @Configuration- it is used to make a class as java based configuration file where we can declare the bean objects.
+
+20. @Bean- it is a method level annotation which can return a bean object.
+
+21. @Component- it is a class level annotation which is annotated for the bean class in which our spring container can create a bean object for that particular bean class.
+
+22. @ComponentScan- it is used to scan all the component classes that are present in the default package.
+
+23. @EnableAutoConfiguration - it is used to tell the spring container to automatically create the bean objects and maintain them.
+
+24. @SpringBootApplication - combo of three annotations - @Configuration @EnableAutoConfiguration @ComponentScan
+--------------------------------------------------------
+	GETTING THE REQUEST VARIABLE
+
+25. @RequestBody - object sent from the client's request body (say postman, react) in the form of json this annotation binds that object to a variable.
+
+26. @PathVariable- it is used to bind the value that comes from the url to a variable.
+
+26.2 @RequestParam - it is used to bind the value thats sent from the url 
+	enroll?sid=1&cid=1
+--------------------------------------------------------
+
+27. @Value attribute - it is used to bind the value to a attribute which is defined in the application.properties file.
+
+28. @Cascade: at the time of mapping/association if we want to specify the cascade type we use this annotation.
+
+29. @JsonManagerReference - used in parent class to stop the recursion.
+     use(uni directional - one to one/ one to many/ many to one)
+30. @JsonBackReference it is used in the child class to stop the recursive call.
+
+31. @JsonIgnoreProperties - it is also used in child class for stop recursion but this shows the dependency as well. @JsonBackRef dont. (Use 30. this is good only for fetching data)
+
+32. @JsonIgnore use this to stop recursion in many to many
+
+33. @RequestMapping -to set as base url. We use this url to send request to this server from client side. 
+	@GetMapping: fetching data 
+	@PutMapping: updating data
+        @PostMapping: inside data in db
+	@DeleteMapping: delete data
+

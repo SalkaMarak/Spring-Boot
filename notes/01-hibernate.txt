@@ -1,0 +1,155 @@
+MySQL connector jar
+and hibernate for files jarfile 2 needed for hibernate
+
+ehhashing jar file for caching 
+-----------------------------------
+
+<property name="hbm2ddl.auto">create</property>  
+	to create table auto everytime it checks if present and it will delete and make new one
+<property name="hbm2ddl.auto">update</property> 
+	if we want to add on already existing table not recreating from scratch.
+
+<property name="show_sql">true</property> to show the queries hibernate is running
+
+===================================================
+
+4 hibernate mappings
+- one to one: 1 student -> one laptop | one laptop used by one student
+- one to many: 1 student -> multiply laptops.
+- many to one: many students -> one laptop
+- many to many: many student -> many laptops;
+
+========================
+	METHODS
+- Get() method()
+	Student s1 = session1.get(Student.class, 1);
+- save() method
+- remove() / delete()
+- detach() / evict() 
+==============
+
+Annotations 
+
+-@Entity : to create table of this  in database
+-@Id : to make the attribute primary key
+-@OneToOne : to make foreign key 
+-@JoinColumn(name="lap_id) : to change foreign key name
+-@Column(name="sudent_id") : to change col name
+-@Table(name="std_table") : to change table name instead of student
+-@Transient : to exclude the attribute in table creation;
+	
+
+private Laptop laptop; 
+
+//or Laptop l1 = new Laptop();
+    	//l1.setLid(100);
+    	//l1.setLname("dell");
+
+-@oneToMany -> will create student_laptop table
+-@ManyToOne -> already mapping so we tell @onetomany to not make new table
+		@OneToMany(mappedBy = "stud")
+	and note: private List<Laptop> laptop; we take lists on onetomany
+
+-To make stud_id (mapping in laptop table) we also have to give instance of Student student as attribute; 
+
+@ManyToMany also creates another table
+===================================
+
+Cache/ Buffer memory: so
+-no need to access database all the time
+-faster access.
+
+Two types: 
+1st level- in the form of session object
+2nd level- eh os spam -3rd party
+	 
+-STEP-1: dependencies : 1st add these two
+  (this)
+	<!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
+	<dependency>
+    		<groupId>net.sf.ehcache</groupId>
+    		<artifactId>ehcache</artifactId>
+    		<version>2.10.8</version>
+	</dependency>
+-STEP-2: This is for connecting - enabling 2nd level caching. 
+ (and this)
+	<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-ehcache -->
+	<dependency>
+    		<groupId>org.hibernate</groupId>
+    		<artifactId>hibernate-ehcache</artifactId>
+    		<version>5.3.30.Final</version>
+	</dependency>
+then enable in configuration 
+	<property name="hibernate.cache.use_second_level_cache">true</property>
+	<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+
+-STEP 3: - in java class
+	next to @Entity
+	@Cacheable
+	@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+
+=====================================
+
+HQL- hibernate query language
+
+SELECT * FROM STUDENT - in hibernate is:
+	Query qry = sessiona.createQuery("from Student"); or "from Student where sid >= 3"
+	List<Student> list_stud = qry.list();
+	for(Student std : list_stud)
+	{
+		syso(std);
+	}
+	//we dont get resultSet here we get a list.
+
+- if we are gonna get only one return object we use
+	Query qry = session.createQuery("from Student where sid = 3");
+	Student stu = (Student)qry.uniqueResult();
+	syso(stu);
+
+- if we want to use it as ? in prepared statement. (:a here instead of ?, a can be any variable)
+	int id  = 4;
+	Query qry = sessiona.createQuery("from Student where sid= :a");
+	qry.setParameter("a", id);
+*******impt
+- if we want just two columns
+	Query qry = session.createQuery("select sid, sname from Student where sid = 5");
+	Object[] arr = (Object[])qry.uniqueResult();
+	for(int i=0; i<arr.length; i++){
+		syso(arr[i]);
+	} //id is stored in arr[0] and name in [1];
+		or simply
+	syso("name:" + arr[0] + "id: " + arr[1]);
+
+- if we want to get specific columns and multiple
+	Query qry = session.createQuery("select sid, sname from Student");
+	List<Object[]> list_obj = (List<Object[]>)qry.list();
+
+	for(Object[] obj : list_obj){
+		System.out.println("id" + arr[0] + ", name: " + arr[1]);
+	}
+
+- select aggregate commands
+	Query qry = session.createQuery("select count(sid) from Student");
+	Long count = (Long)qry.uniqueResult();
+	syso(count);
+
+-To use sql command
+	NativeQuery qry = session1.createSQLQuery("select * from student)
+===================================================
+
+Q. diff betw get and load method
+	Student std = session.get(Student.class, 4); 
+		sout(std); use or not use //
+	directly fires to database whether we use it or not.
+	Student std = session.load(Student.class, 4);
+		the query isn't fired(executed) if we dont print it. First it gives some proxy object, until it is useful it won't fire and hold the real value.
+	- early/eager fetch, lazy fetch.
+====================================================
+
+-Hibernate state object
+	1. New state -> using new state w no data.
+	2. Transient -> initialize the data
+	3. Persistent -> save() in database w session object: object is linked with java application and database
+	4. Detached -> use session1.detach(s1); so the changes will not reflect on database. Object is not linked to database but java application only.
+   from 3 or 4 ==> 
+	5. Remove state-> when we call remove method to remove the data from the db.  
